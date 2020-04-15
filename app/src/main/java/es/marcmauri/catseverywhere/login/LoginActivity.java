@@ -1,4 +1,4 @@
-package com.example.catseverywhere.login;
+package es.marcmauri.catseverywhere.login;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.catseverywhere.R;
-import com.example.catseverywhere.root.App;
+import es.marcmauri.catseverywhere.root.App;
 import com.google.android.material.snackbar.Snackbar;
 
 import javax.inject.Inject;

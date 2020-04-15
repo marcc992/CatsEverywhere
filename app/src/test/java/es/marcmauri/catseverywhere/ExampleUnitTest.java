@@ -1,4 +1,4 @@
-package com.example.catseverywhere;
+package es.marcmauri.catseverywhere;
 
 import org.junit.Test;
 

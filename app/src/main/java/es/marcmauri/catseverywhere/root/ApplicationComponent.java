@@ -1,7 +1,7 @@
-package com.example.catseverywhere.root;
+package es.marcmauri.catseverywhere.root;
 
-import com.example.catseverywhere.login.LoginActivity;
-import com.example.catseverywhere.login.LoginModule;
+import es.marcmauri.catseverywhere.login.LoginActivity;
+import es.marcmauri.catseverywhere.login.LoginModule;
 
 import javax.inject.Singleton;
 

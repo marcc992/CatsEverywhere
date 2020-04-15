@@ -1,4 +1,4 @@
-package com.example.catseverywhere.login;
+package es.marcmauri.catseverywhere.login;
 
 import io.reactivex.Observable;
 

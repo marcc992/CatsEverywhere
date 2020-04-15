@@ -1,4 +1,4 @@
-package com.example.catseverywhere.root;
+package es.marcmauri.catseverywhere.root;
 
 import android.app.Application;
 
