@@ -5,8 +5,8 @@
     android:id="@+id/cardView_cat_breed"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
     android:layout_marginStart="8dp"
+    android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
     android:clickable="true"
@@ -15,7 +15,7 @@
     app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="0dp"
     app:cardElevation="3dp">
-    
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_inner"
         android:layout_width="match_parent"
@@ -71,7 +71,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
-
 
 
 </androidx.cardview.widget.CardView>

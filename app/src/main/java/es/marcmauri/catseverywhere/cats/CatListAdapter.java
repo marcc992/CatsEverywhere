@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.catseverywhere.R;
@@ -22,17 +23,20 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItem
 
     private final String TAG = CatListAdapter.class.getName();
 
-    List<CatViewModel> list;
+    private View itemView;
+    private List<CatViewModel> list;
+    private OnItemClickListener listener;
 
 
-    public CatListAdapter(List<CatViewModel> list) {
+    public CatListAdapter(List<CatViewModel> list, OnItemClickListener listener) {
         this.list = list;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ListItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cat_breed_list_item, parent, false);
+        this.itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cat_breed_list_item, parent, false);
         return new ListItemViewHolder(itemView);
     }
 
@@ -50,6 +54,13 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItem
 
         holder.catBreedName.setText(list.get(position).getBreedName());
         holder.catBreedDescription.setText(list.get(position).getBreedDescription());
+
+        holder.cardViewCatBreed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(list.get(position), position);
+            }
+        });
     }
 
     @Override
@@ -59,6 +70,9 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItem
 
 
     static class ListItemViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.cardView_cat_breed)
+        CardView cardViewCatBreed;
 
         @BindView(R.id.imageView_cat_breed)
         ImageView catBreedImage;
@@ -74,5 +88,9 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItem
 
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(CatViewModel catBreed, int position);
     }
 }

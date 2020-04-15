@@ -83,7 +83,7 @@ public class LoginPresenter implements LoginMVP.Presenter {
     }
 
     @Override
-    public void rxJavaUnsuscribe() {
+    public void rxJavaUnsubscribe() {
         if (loginSubscription != null && !loginSubscription.isDisposed()) {
             loginSubscription.dispose();
         }

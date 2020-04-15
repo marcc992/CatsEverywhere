@@ -1,14 +1,15 @@
 package es.marcmauri.catseverywhere.cats;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.ViewGroup;
 
 import com.example.catseverywhere.R;
 import com.google.android.material.snackbar.Snackbar;
@@ -50,13 +51,25 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
 
         ((App) getApplication()).getComponent().inject(this);
 
-        catListAdapter = new CatListAdapter(catBreedList);
+        catListAdapter = new CatListAdapter(catBreedList, new CatListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(CatViewModel catBreed, int position) {
+                presenter.onCatBreedItemClicked(catBreed);
+            }
+        });
 
         recyclerView.setAdapter(catListAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override
@@ -69,7 +82,7 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
     @Override
     protected void onStop() {
         super.onStop();
-        presenter.rxJavaUnsuscribe();
+        presenter.rxJavaUnsubscribe();
         catBreedList.clear();
         catListAdapter.notifyDataSetChanged();
     }

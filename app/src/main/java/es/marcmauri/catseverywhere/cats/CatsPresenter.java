@@ -49,7 +49,13 @@ public class CatsPresenter implements CatsMVP.Presenter {
     }
 
     @Override
-    public void rxJavaUnsuscribe() {
+    public void onCatBreedItemClicked(CatViewModel catBreed) {
+        // todo: Go to the Cat breed details screen
+        view.showSnackBar("Cat breed " + catBreed.getBreedName() + " clicked!");
+    }
+
+    @Override
+    public void rxJavaUnsubscribe() {
         if (catBreedsSubscription != null && !catBreedsSubscription.isDisposed()) {
             catBreedsSubscription.dispose();
         }

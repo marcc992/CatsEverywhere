@@ -1,6 +1,5 @@
 package es.marcmauri.catseverywhere.cats;
 
-
 import io.reactivex.Observable;
 
 public interface CatsMVP {
@@ -14,7 +13,9 @@ public interface CatsMVP {
     interface Presenter {
         void loadData();
 
-        void rxJavaUnsuscribe();
+        void onCatBreedItemClicked(CatViewModel catBreed);
+
+        void rxJavaUnsubscribe();
 
         void setView(CatsMVP.View view);
     }

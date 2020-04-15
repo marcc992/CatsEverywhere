@@ -31,7 +31,7 @@ public interface LoginMVP {
 
         void onSignUpButtonClicked();
 
-        void rxJavaUnsuscribe();
+        void rxJavaUnsubscribe();
     }
 
     interface Model {

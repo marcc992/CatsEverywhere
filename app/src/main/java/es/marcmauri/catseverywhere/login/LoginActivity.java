@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.View {
     protected void onStop() {
         super.onStop();
         Log.i(TAG, "onStop()");
-        presenter.rxJavaUnsuscribe();
+        presenter.rxJavaUnsubscribe();
     }
 
     @Override
