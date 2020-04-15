@@ -66,4 +66,7 @@ dependencies {
     // Butter Knife (Last version works because we are using Java 8 to compile)
     implementation "com.jakewharton:butterknife:$butterKnifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+
+    // Picasso (Image management)
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

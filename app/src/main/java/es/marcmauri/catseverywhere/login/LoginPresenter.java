@@ -1,7 +1,9 @@
 package es.marcmauri.catseverywhere.login;
 
+import android.content.Intent;
 import android.util.Log;
 
+import es.marcmauri.catseverywhere.cats.CatsActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
@@ -48,6 +50,7 @@ public class LoginPresenter implements LoginMVP.Presenter {
                             if (view != null) {
                                 if (user.isValid()) {
                                     view.showValidCredentials();
+                                    view.navigateToCatsScreen();
                                 } else {
                                     view.showInvalidCredentials();
                                 }

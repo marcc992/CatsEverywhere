@@ -21,9 +21,7 @@ public interface LoginMVP {
 
         void showCustomSnackBar(String text);
 
-        void setUsername(String user);
-
-        void setPassword(String pass);
+        void navigateToCatsScreen();
     }
 
     interface Presenter {

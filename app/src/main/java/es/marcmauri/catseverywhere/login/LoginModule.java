@@ -1,5 +1,7 @@
 package es.marcmauri.catseverywhere.login;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -16,7 +18,7 @@ public class LoginModule {
         return new LoginModel(repository);
     }
 
-    // todo: provide repo
+    @Singleton
     @Provides
     LoginRepository provideLoginRepository() {
         return new MockRepository();

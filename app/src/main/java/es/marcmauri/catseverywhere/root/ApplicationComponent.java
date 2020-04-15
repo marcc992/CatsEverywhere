@@ -2,6 +2,7 @@ package es.marcmauri.catseverywhere.root;
 
 import es.marcmauri.catseverywhere.cats.CatsActivity;
 import es.marcmauri.catseverywhere.cats.CatsModule;
+import es.marcmauri.catseverywhere.http.TheCatApiModule;
 import es.marcmauri.catseverywhere.login.LoginActivity;
 import es.marcmauri.catseverywhere.login.LoginModule;
 
@@ -13,7 +14,8 @@ import dagger.Component;
 @Component(modules = {
         ApplicationModule.class,
         LoginModule.class,
-        CatsModule.class
+        CatsModule.class,
+        TheCatApiModule.class
 })
 public interface ApplicationComponent {
 

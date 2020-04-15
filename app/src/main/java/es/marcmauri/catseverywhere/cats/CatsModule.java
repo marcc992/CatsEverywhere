@@ -1,7 +1,10 @@
 package es.marcmauri.catseverywhere.cats;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
+import es.marcmauri.catseverywhere.http.TheCatApiService;
 
 @Module
 public class CatsModule {
@@ -16,9 +19,9 @@ public class CatsModule {
         return new CatsModel(repository);
     }
 
+    @Singleton
     @Provides
-    public Repository provideCatsRepository() {
-        // todo: el parametro traera el catsApiService
-        return new CatsRepository();
+    public Repository provideCatsRepository(TheCatApiService theCatApiService) {
+        return new CatsRepository(theCatApiService);
     }
 }

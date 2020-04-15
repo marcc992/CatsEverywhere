@@ -63,19 +63,7 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
     protected void onResume() {
         super.onResume();
         presenter.setView(this);
-        // todo: presenter.loadData();
-        updateData(new CatViewModel("Yorkshire", "Perrete muy, pero que muy repelente", "no_image"));
-        updateData(new CatViewModel("Yorkshire 2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut ali", "no_image"));
-        updateData(new CatViewModel("Yorkshire 3", "m veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. E", "no_image"));
-        updateData(new CatViewModel("Yorkshire 4", "smod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in r", "no_image"));
-        updateData(new CatViewModel("Yorkshire 5", "nulla pariatur. Excepteur sint o", "no_image"));
-        updateData(new CatViewModel("Yorkshire 6", "m dolor sit amet,", "no_image"));
-        updateData(new CatViewModel("Yorkshire 7", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "no_image"));
-        updateData(new CatViewModel("Yorkshire 8", "Molestie nunc non blandit massa. Etiam tempor orci eu lobortis elementum nibh tellus molestie ", "no_image"));
-        updateData(new CatViewModel("Yorkshire 9", "nunc. Id nibh tortor id aliquet lectus proin nibh. Ac feugiat sed lectus vestib", "no_image"));
-        updateData(new CatViewModel("Yorkshire 10", "Id nibh tortor id aliquet lectus proin nibh. Ac feugiat sed lectus vestibulum mattis ullamcorper velit sed. In nibh mauris cursus mattis molestie a. A", "no_image"));
-        updateData(new CatViewModel("Yorkshire 11", "get. Arcu ac tortor dignissim convallis aenean et. Morbi enim nunc faucibus a pel", "no_image"));
-        updateData(new CatViewModel("Yorkshire 12", "Congue mauris rhoncus aenean vel elit scelerisque mauris. Rhoncus urna neque viverra justo nec ultrices dui sapien eget. Pellentesque nec nam aliquam sem et.", "no_image"));
+        presenter.loadData();
     }
 
     @Override

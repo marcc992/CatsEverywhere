@@ -3,6 +3,7 @@ package es.marcmauri.catseverywhere.root;
 import android.app.Application;
 
 import es.marcmauri.catseverywhere.cats.CatsModule;
+import es.marcmauri.catseverywhere.http.TheCatApiModule;
 import es.marcmauri.catseverywhere.login.LoginModule;
 
 public class App extends Application {
@@ -17,6 +18,7 @@ public class App extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .loginModule(new LoginModule())
                 .catsModule(new CatsModule())
+                .theCatApiModule(new TheCatApiModule())
                 .build();
     }
 
