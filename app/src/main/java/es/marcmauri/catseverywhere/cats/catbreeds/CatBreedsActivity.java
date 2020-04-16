@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -24,6 +27,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
+import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import es.marcmauri.catseverywhere.cats.catbreeddetails.CatBreedDetailsActivity;
 import es.marcmauri.catseverywhere.common.ExtraTags;
 import es.marcmauri.catseverywhere.root.App;
@@ -34,6 +38,9 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     @BindView(R.id.activity_cat_breeds_root_view)
     ViewGroup rootView;
+
+    @BindView(R.id.spinner_countries)
+    Spinner spinner;
 
     @BindView(R.id.recyclerView_cat_breeds)
     RecyclerView recyclerView;
@@ -46,6 +53,10 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     private CatBreedListAdapter catBreedListAdapter;
     private List<CatBreedViewModel> catBreedList = new ArrayList<>();
+    // TODO: Make CustomSpinnerAdapter<>
+    private ArrayAdapter<String> spinnerAdapter;
+    private List<CountryViewModel> catBreedCountries = new ArrayList<>();
+    private List<String> catBreedCountriesSpinner = new ArrayList<>();
 
 
     @Override
@@ -58,6 +69,22 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         ButterKnife.bind(this);
 
         ((App) getApplication()).getComponent().inject(this);
+
+        spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                catBreedCountriesSpinner);
+
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                presenter.onCatBreedCountryClicked(catBreedCountries.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
             @Override
@@ -78,13 +105,17 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     protected void onResume() {
         super.onResume();
         presenter.setView(this);
-        presenter.loadData();
+        presenter.loadCountries();
+        presenter.loadAllData();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         presenter.rxJavaUnsubscribe();
+        catBreedCountries.clear();
+        catBreedCountriesSpinner.clear();
+        spinnerAdapter.notifyDataSetChanged();
         catBreedList.clear();
         catBreedListAdapter.notifyDataSetChanged();
     }
@@ -94,6 +125,14 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         catBreedList.add(viewModel);
         catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
         Log.d(TAG, "New item inserted: " + viewModel.getBreedName());
+    }
+
+    @Override
+    public void updateSpinner(CountryViewModel country) {
+        catBreedCountries.add(country);
+        catBreedCountriesSpinner.add(country.getName());
+        spinnerAdapter.notifyDataSetChanged();
+        Log.d(TAG, "New country inserted: " + country);
     }
 
     @Override

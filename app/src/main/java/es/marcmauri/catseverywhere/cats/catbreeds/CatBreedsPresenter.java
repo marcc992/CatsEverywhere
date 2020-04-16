@@ -1,6 +1,7 @@
 package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
+import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
@@ -13,7 +14,8 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
     private CatBreedsMVP.View view;
     private CatBreedsMVP.Model model;
 
-    private Disposable catBreedsSubscription = null;
+    private Disposable getDataSubscription = null;
+    private Disposable getCountriesSubscription = null;
 
     public CatBreedsPresenter(CatBreedsMVP.Model model) {
         this.model = model;
@@ -21,12 +23,44 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
 
     @Override
-    public void loadData() {
+    public void loadCountries() {
+        getDataSubscription = model.getCountries()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<CountryViewModel>() {
+                    @Override
+                    public void onNext(CountryViewModel country) {
+                        if (view != null) {
+                            view.updateSpinner(country);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        if (view != null) {
+                            view.hiddenProgressBar();
+                            view.showSnackBar("Error fetching cat breed countries...");
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (view != null) {
+                            view.hiddenProgressBar();
+                            view.showSnackBar("Cat breed countries fetched successfully!");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void loadAllData() {
         if (view != null) {
             view.showProgressBar();
         }
 
-        catBreedsSubscription = model.result()
+        getDataSubscription = model.getCatBreedsData()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<CatBreedViewModel>() {
@@ -58,6 +92,14 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
     }
 
     @Override
+    public void onCatBreedCountryClicked(CountryViewModel country) {
+        if (view != null) {
+            view.showSnackBar("Country: " + country.getName());
+        }
+        // TODO: Implementar carga de razas por pais
+    }
+
+    @Override
     public void onCatBreedItemClicked(CatBreedViewModel catBreed) {
         if (view != null) {
             view.navigateToCatBreedDetailsScreen(catBreed);
@@ -66,8 +108,8 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
     @Override
     public void rxJavaUnsubscribe() {
-        if (catBreedsSubscription != null && !catBreedsSubscription.isDisposed()) {
-            catBreedsSubscription.dispose();
+        if (getDataSubscription != null && !getDataSubscription.isDisposed()) {
+            getDataSubscription.dispose();
         }
     }
 

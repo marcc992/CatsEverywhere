@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import es.marcmauri.catseverywhere.http.TheCatApiService;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatBreedApi;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatImageApi;
@@ -22,6 +23,14 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
     // todo: el objeto sera el propietario del servidor
     private List<CatBreedApi> catBreedList;
     private List<String> imageUrls;
+    private List<CountryViewModel> catBreedCountryList = new ArrayList<>();
+    private List<CountryViewModel> mockCountries = new ArrayList<CountryViewModel>(){{
+        add(new CountryViewModel("all", "All"));
+        add(new CountryViewModel("EG", "Egypt"));
+        add(new CountryViewModel("US", "United States"));
+        add(new CountryViewModel("AE", "United Arab Emirates"));
+        add(new CountryViewModel("AU", "Australia"));
+    }};
 
     private long lastTimestamp;
 
@@ -40,9 +49,36 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
     }
 
     @Override
+    public Observable<CountryViewModel> getCatBreedCountriesFromNetwork() {
+        return Observable.fromIterable(mockCountries)
+                .doOnNext(new Consumer<CountryViewModel>() {
+                    @Override
+                    public void accept(CountryViewModel country) throws Exception {
+                        catBreedCountryList.add(country);
+                    }
+                });
+    }
+
+    @Override
+    public Observable<CountryViewModel> getCatBreedCountriesFromCache() {
+        if (isUpdated()) {
+            return Observable.fromIterable(catBreedCountryList);
+        } else {
+            lastTimestamp = System.currentTimeMillis();
+            catBreedCountryList.clear();
+            return Observable.empty();
+        }
+    }
+
+    @Override
+    public Observable<CountryViewModel> getCatBreedCountriesData() {
+        return getCatBreedCountriesFromCache().switchIfEmpty(getCatBreedCountriesFromNetwork());
+    }
+
+    @Override
     public Observable<CatBreedApi> getCatBreedFromNetwork() {
 
-        Observable<List<CatBreedApi>> allCatBreedsObservable = theCatApiService.getAllCatBreeds(0, 15);
+        Observable<List<CatBreedApi>> allCatBreedsObservable = theCatApiService.getAllCatBreeds(0, 50);
 
         return allCatBreedsObservable
                 .concatMap(new Function<List<CatBreedApi>, Observable<CatBreedApi>>() {
