@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -23,9 +23,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.marcmauri.catseverywhere.root.App;
 
-public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
+public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP.View {
 
-    private final String TAG = CatsActivity.class.getName();
+    private final String TAG = CatBreedsActivity.class.getName();
 
     @BindView(R.id.activity_cats_root_view)
     ViewGroup rootView;
@@ -34,16 +34,16 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
     RecyclerView recyclerView;
 
     @Inject
-    CatsMVP.Presenter presenter;
+    CatBreedsMVP.Presenter presenter;
 
-    private CatListAdapter catListAdapter;
-    private List<CatViewModel> catBreedList = new ArrayList<>();
+    private CatBreedListAdapter catBreedListAdapter;
+    private List<CatBreedViewModel> catBreedList = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cats);
+        setContentView(R.layout.activity_cat_breedss);
 
         Log.i(TAG, "onCreate()");
 
@@ -51,14 +51,14 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
 
         ((App) getApplication()).getComponent().inject(this);
 
-        catListAdapter = new CatListAdapter(catBreedList, new CatListAdapter.OnItemClickListener() {
+        catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(CatViewModel catBreed, int position) {
+            public void onItemClick(CatBreedViewModel catBreed, int position) {
                 presenter.onCatBreedItemClicked(catBreed);
             }
         });
 
-        recyclerView.setAdapter(catListAdapter);
+        recyclerView.setAdapter(catBreedListAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
@@ -84,13 +84,13 @@ public class CatsActivity extends AppCompatActivity implements CatsMVP.View {
         super.onStop();
         presenter.rxJavaUnsubscribe();
         catBreedList.clear();
-        catListAdapter.notifyDataSetChanged();
+        catBreedListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void updateData(CatViewModel viewModel) {
+    public void updateData(CatBreedViewModel viewModel) {
         catBreedList.add(viewModel);
-        catListAdapter.notifyItemInserted(catBreedList.size() - 1);
+        catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
         Log.d(TAG, "New item inserted: " + viewModel.getBreedName());
     }
 

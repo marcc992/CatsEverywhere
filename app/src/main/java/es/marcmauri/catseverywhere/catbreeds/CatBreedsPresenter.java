@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.Nullable;
@@ -6,15 +6,15 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class CatsPresenter implements CatsMVP.Presenter {
+public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
     @Nullable
-    private CatsMVP.View view;
-    private CatsMVP.Model model;
+    private CatBreedsMVP.View view;
+    private CatBreedsMVP.Model model;
 
     private Disposable catBreedsSubscription = null;
 
-    public CatsPresenter(CatsMVP.Model model) {
+    public CatBreedsPresenter(CatBreedsMVP.Model model) {
         this.model = model;
     }
 
@@ -24,12 +24,12 @@ public class CatsPresenter implements CatsMVP.Presenter {
         catBreedsSubscription = model.result()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<CatViewModel>() {
+                .subscribeWith(new DisposableObserver<CatBreedViewModel>() {
 
                     @Override
-                    public void onNext(CatViewModel catViewModel) {
+                    public void onNext(CatBreedViewModel catBreedViewModel) {
                         if (view != null) {
-                            view.updateData(catViewModel);
+                            view.updateData(catBreedViewModel);
                         }
                     }
 
@@ -49,7 +49,7 @@ public class CatsPresenter implements CatsMVP.Presenter {
     }
 
     @Override
-    public void onCatBreedItemClicked(CatViewModel catBreed) {
+    public void onCatBreedItemClicked(CatBreedViewModel catBreed) {
         // todo: Go to the Cat breed details screen
         view.showSnackBar("Cat breed " + catBreed.getBreedName() + " clicked!");
     }
@@ -62,7 +62,7 @@ public class CatsPresenter implements CatsMVP.Presenter {
     }
 
     @Override
-    public void setView(CatsMVP.View view) {
+    public void setView(CatBreedsMVP.View view) {
         this.view = view;
     }
 }

@@ -1,9 +1,9 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatBreedApi;
 import io.reactivex.Observable;
 
-public interface Repository {
+public interface CatBreedsRepository {
 
     Observable<CatBreedApi> getCatBreedFromNetwork();
     Observable<CatBreedApi> getCatBreedFromCache();

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.catseverywhere.R;
 
-import es.marcmauri.catseverywhere.cats.CatsActivity;
+import es.marcmauri.catseverywhere.catbreeds.CatBreedsActivity;
 import es.marcmauri.catseverywhere.root.App;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.View {
 
     @Override
     public void navigateToCatsScreen() {
-        Intent intent = new Intent(this, CatsActivity.class)
+        Intent intent = new Intent(this, CatBreedsActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK |
                         Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);

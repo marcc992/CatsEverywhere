@@ -5,7 +5,7 @@
     android:id="@+id/activity_cats_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="es.marcmauri.catseverywhere.cats.CatsActivity">
+    tools:context="es.marcmauri.catseverywhere.catbreeds.CatBreedsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_cat_breeds"

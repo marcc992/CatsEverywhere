@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,16 +19,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItemViewHolder> {
+public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapter.ListItemViewHolder> {
 
-    private final String TAG = CatListAdapter.class.getName();
+    private final String TAG = CatBreedListAdapter.class.getName();
 
     private View itemView;
-    private List<CatViewModel> list;
+    private List<CatBreedViewModel> list;
     private OnItemClickListener listener;
 
 
-    public CatListAdapter(List<CatViewModel> list, OnItemClickListener listener) {
+    public CatBreedListAdapter(List<CatBreedViewModel> list, OnItemClickListener listener) {
         this.list = list;
         this.listener = listener;
     }
@@ -91,6 +91,6 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.ListItem
     }
 
     public interface OnItemClickListener {
-        void onItemClick(CatViewModel catBreed, int position);
+        void onItemClick(CatBreedViewModel catBreed, int position);
     }
 }

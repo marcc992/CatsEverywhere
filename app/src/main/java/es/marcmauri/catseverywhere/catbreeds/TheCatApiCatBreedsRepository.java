@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
 import android.util.Log;
 
@@ -9,13 +9,12 @@ import es.marcmauri.catseverywhere.http.TheCatApiService;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatBreedApi;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatImageApi;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
-public class CatsRepository implements Repository {
+public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
 
-    private static final String TAG = CatsRepository.class.getName();
+    private static final String TAG = TheCatApiCatBreedsRepository.class.getName();
     private static final long CACHE_LIFETIME = 20 * 1000; // 20 seconds for cache
 
     private TheCatApiService theCatApiService;
@@ -27,7 +26,7 @@ public class CatsRepository implements Repository {
     private long lastTimestamp;
 
 
-    public CatsRepository(TheCatApiService tcaService) {
+    public TheCatApiCatBreedsRepository(TheCatApiService tcaService) {
         this.theCatApiService = tcaService;
 
         this.lastTimestamp = System.currentTimeMillis();

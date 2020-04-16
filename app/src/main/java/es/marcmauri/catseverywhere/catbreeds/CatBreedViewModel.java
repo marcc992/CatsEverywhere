@@ -1,11 +1,11 @@
-package es.marcmauri.catseverywhere.cats;
+package es.marcmauri.catseverywhere.catbreeds;
 
-public class CatViewModel {
+public class CatBreedViewModel {
     private String breedName;
     private String breedDescription;
     private String imgUrl;
 
-    public CatViewModel(String breedName, String breedDescription, String imgUrl) {
+    public CatBreedViewModel(String breedName, String breedDescription, String imgUrl) {
         this.breedName = breedName;
         this.breedDescription = breedDescription;
         this.imgUrl = imgUrl;
