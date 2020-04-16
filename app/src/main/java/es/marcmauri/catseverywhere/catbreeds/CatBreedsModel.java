@@ -18,7 +18,7 @@ public class CatBreedsModel implements CatBreedsMVP.Model {
         return Observable.zip(catBreedsRepository.getCatBreedData(), catBreedsRepository.getCatBreedImageUrl(), new BiFunction<CatBreedApi, String, CatBreedViewModel>() {
             @Override
             public CatBreedViewModel apply(CatBreedApi catBreedApi, String imageUrl) {
-                return new CatBreedViewModel(catBreedApi.getName(), catBreedApi.getDescription(), imageUrl);
+                return new CatBreedViewModel(catBreedApi.getId(), catBreedApi.getName(), catBreedApi.getDescription(), imageUrl);
             }
         });
     }
