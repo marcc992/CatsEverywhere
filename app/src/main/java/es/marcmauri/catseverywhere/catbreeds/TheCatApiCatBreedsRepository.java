@@ -81,7 +81,7 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
                 .concatMap(new Function<CatBreedApi, Observable<List<CatImageApi>>>() {
                     @Override
                     public Observable<List<CatImageApi>> apply(CatBreedApi catBreedApi) {
-                        return theCatApiService.getBreadImageById(catBreedApi.getId(), false);
+                        return theCatApiService.getBreedImageById(catBreedApi.getId(), "png,jpg", false);
                     }
                 })
                 .concatMap(new Function<List<CatImageApi>, Observable<CatImageApi>>() {

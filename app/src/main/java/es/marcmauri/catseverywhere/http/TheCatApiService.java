@@ -16,9 +16,9 @@ public interface TheCatApiService {
             @Query("limit") int resultsPerPage);
 
     @GET("images/search")
-    Observable<List<CatImageApi>> getBreadImageById(
+    Observable<List<CatImageApi>> getBreedImageById(
             @Query("breed_ids") String breedId,
-            //@Query("size") String size,           //TODO: {full, med, small, thumb} This doesn't work
-            //@Query("mime_types") String mimeType, //TODO: {jpg,gif,png} Not all breeds have all formats
+            //@Query("size") String size,           //TODO: {full, med, small} This doesn't work
+            @Query("mime_types") String mimeType,   //TODO "[png],[jpg],[gif]" Write sorted mimes. If A does not exists then B then C
             @Query("include_breeds") boolean includeBreed);
 }
