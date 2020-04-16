@@ -32,44 +32,46 @@ public class LoginPresenter implements LoginMVP.Presenter {
     public void onLogInButtonClicked() {
         Log.d(TAG, "onLogInButtonClicked()");
 
-        view.showProgress();
+        if (view != null) {
+            view.showProgress();
 
-        if (view.getUsername().trim().isEmpty() || view.getPassword().trim().isEmpty()) {
-            view.showInvalidInput();
-            view.hiddenProgress();
+            if (view.getUsername().trim().isEmpty() || view.getPassword().trim().isEmpty()) {
+                view.showInvalidInput();
+                view.hiddenProgress();
 
-        } else {
-            loginSubscription = model.getUser(view.getUsername(), view.getPassword())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableObserver<User>() {
-                        @Override
-                        public void onNext(User user) {
-                            if (view != null) {
-                                if (user.isValid()) {
-                                    view.showValidCredentials();
-                                    view.navigateToCatsScreen();
-                                } else {
-                                    view.showInvalidCredentials();
+            } else {
+                loginSubscription = model.getUser(view.getUsername(), view.getPassword())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableObserver<User>() {
+                            @Override
+                            public void onNext(User user) {
+                                if (view != null) {
+                                    if (user.isValid()) {
+                                        view.showValidCredentials();
+                                        view.navigateToCatBreedsScreen();
+                                    } else {
+                                        view.showInvalidCredentials();
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            e.printStackTrace();
-                            if (view != null) {
-                                view.showCustomSnackBar("Error on fetching user details");
+                            @Override
+                            public void onError(Throwable e) {
+                                e.printStackTrace();
+                                if (view != null) {
+                                    view.showCustomSnackBar("Error on fetching user details");
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onComplete() {
-                            if (view != null) {
-                                view.hiddenProgress();
+                            @Override
+                            public void onComplete() {
+                                if (view != null) {
+                                    view.hiddenProgress();
+                                }
                             }
-                        }
-                    });
+                        });
+            }
         }
     }
 

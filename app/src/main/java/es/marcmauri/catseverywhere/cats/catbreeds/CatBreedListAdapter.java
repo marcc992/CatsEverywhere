@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
 
 public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapter.ListItemViewHolder> {
 
@@ -42,12 +43,12 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ListItemViewHolder holder, int position) {
-        Log.d(TAG, "Image fetched from breed " + list.get(position).getBreedName() + " => " + list.get(position).getImgUrl());
+        Log.d(TAG, "Image fetched from breed " + list.get(position).getBreedName() + " => " + list.get(position).getBreedImageUrl());
 
-        if (list.get(position).getImgUrl().isEmpty()) {
+        if (list.get(position).getBreedImageUrl().isEmpty()) {
             Log.w(TAG, "The cat breed " + list.get(position).getBreedName() + " has no image");
         } else {
-            Picasso.get().load(list.get(position).getImgUrl())
+            Picasso.get().load(list.get(position).getBreedImageUrl())
                     .fit().centerCrop()
                     .into(holder.catBreedImage);
         }

@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatBreedApi;
 import io.reactivex.Observable;

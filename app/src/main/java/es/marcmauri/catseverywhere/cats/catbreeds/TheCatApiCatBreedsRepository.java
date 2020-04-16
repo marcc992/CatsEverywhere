@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import android.util.Log;
 

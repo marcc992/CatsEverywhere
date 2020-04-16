@@ -1,5 +1,6 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,13 +22,16 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
+import es.marcmauri.catseverywhere.cats.catbreeddetails.CatBreedDetailsActivity;
+import es.marcmauri.catseverywhere.common.ExtraTags;
 import es.marcmauri.catseverywhere.root.App;
 
 public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP.View {
 
     private final String TAG = CatBreedsActivity.class.getName();
 
-    @BindView(R.id.activity_cats_root_view)
+    @BindView(R.id.activity_cat_breeds_root_view)
     ViewGroup rootView;
 
     @BindView(R.id.recyclerView_cat_breeds)
@@ -64,12 +68,6 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     @Override
@@ -97,5 +95,12 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     @Override
     public void showSnackBar(String message) {
         Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToCatBreedDetailsScreen(CatBreedViewModel catBreed) {
+        Intent intent = new Intent(this, CatBreedDetailsActivity.class)
+                .putExtra(ExtraTags.EXTRA_CAT_BREED_OBJECT, catBreed);
+        startActivity(intent);
     }
 }

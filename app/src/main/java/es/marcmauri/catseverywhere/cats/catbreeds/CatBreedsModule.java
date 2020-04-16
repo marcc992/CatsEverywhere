@@ -1,4 +1,4 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import javax.inject.Singleton;
 
@@ -10,18 +10,18 @@ import es.marcmauri.catseverywhere.http.TheCatApiService;
 public class CatBreedsModule {
 
     @Provides
-    public CatBreedsMVP.Presenter provideCatsPresenter(CatBreedsMVP.Model model) {
+    public CatBreedsMVP.Presenter provideCatBreedsPresenter(CatBreedsMVP.Model model) {
         return new CatBreedsPresenter(model);
     }
 
     @Provides
-    public CatBreedsMVP.Model provideCatsModel(CatBreedsRepository catBreedsRepository) {
+    public CatBreedsMVP.Model provideCatBreedsModel(CatBreedsRepository catBreedsRepository) {
         return new CatBreedsModel(catBreedsRepository);
     }
 
     @Singleton
     @Provides
-    public CatBreedsRepository provideCatsRepository(TheCatApiService theCatApiService) {
+    public CatBreedsRepository provideCatBreedsRepository(TheCatApiService theCatApiService) {
         return new TheCatApiCatBreedsRepository(theCatApiService);
     }
 }

@@ -1,5 +1,6 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
+import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
@@ -43,15 +44,18 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
                     @Override
                     public void onComplete() {
-                        view.showSnackBar("Cat breeds data fetched successfully!");
+                        if (view != null) {
+                            view.showSnackBar("Cat breeds data fetched successfully!");
+                        }
                     }
                 });
     }
 
     @Override
     public void onCatBreedItemClicked(CatBreedViewModel catBreed) {
-        // todo: Go to the Cat breed details screen
-        view.showSnackBar("Cat breed " + catBreed.getBreedName() + " clicked!");
+        if (view != null) {
+            view.navigateToCatBreedDetailsScreen(catBreed);
+        }
     }
 
     @Override

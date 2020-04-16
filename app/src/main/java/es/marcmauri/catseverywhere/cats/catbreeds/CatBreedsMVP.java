@@ -1,5 +1,6 @@
-package es.marcmauri.catseverywhere.catbreeds;
+package es.marcmauri.catseverywhere.cats.catbreeds;
 
+import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
 import io.reactivex.Observable;
 
 public interface CatBreedsMVP {
@@ -8,6 +9,8 @@ public interface CatBreedsMVP {
         void updateData(CatBreedViewModel viewModel);
 
         void showSnackBar(String message);
+
+        void navigateToCatBreedDetailsScreen(CatBreedViewModel catBreed);
     }
 
     interface Presenter {
