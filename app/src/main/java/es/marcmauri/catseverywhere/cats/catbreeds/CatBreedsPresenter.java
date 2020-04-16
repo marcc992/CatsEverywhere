@@ -22,6 +22,10 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
     @Override
     public void loadData() {
+        if (view != null) {
+            view.showProgressBar();
+        }
+
         catBreedsSubscription = model.result()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -38,6 +42,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         if (view != null) {
+                            view.hiddenProgressBar();
                             view.showSnackBar("Error fetching cat breeds...");
                         }
                     }
@@ -45,6 +50,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                     @Override
                     public void onComplete() {
                         if (view != null) {
+                            view.hiddenProgressBar();
                             view.showSnackBar("Cat breeds data fetched successfully!");
                         }
                     }

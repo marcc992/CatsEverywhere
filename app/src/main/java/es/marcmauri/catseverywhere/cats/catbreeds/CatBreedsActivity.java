@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -36,6 +37,9 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     @BindView(R.id.recyclerView_cat_breeds)
     RecyclerView recyclerView;
+
+    @BindView(R.id.progressBar_cat_breed_list)
+    ProgressBar progressBar;
 
     @Inject
     CatBreedsMVP.Presenter presenter;
@@ -90,6 +94,16 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         catBreedList.add(viewModel);
         catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
         Log.d(TAG, "New item inserted: " + viewModel.getBreedName());
+    }
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hiddenProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override

@@ -20,4 +20,15 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/cat_breed_list_item" />
 
+    <ProgressBar
+        android:id="@+id/progressBar_cat_breed_list"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

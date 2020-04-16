@@ -8,6 +8,8 @@ public interface CatBreedsMVP {
     interface View {
         void updateData(CatBreedViewModel viewModel);
 
+        void showProgressBar();
+        void hiddenProgressBar();
         void showSnackBar(String message);
 
         void navigateToCatBreedDetailsScreen(CatBreedViewModel catBreed);
