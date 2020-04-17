@@ -1,6 +1,9 @@
 package es.marcmauri.catseverywhere.cats;
 
-public class CountryViewModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CountryViewModel implements Parcelable {
 
     private String code;
     private String name;
@@ -9,6 +12,34 @@ public class CountryViewModel {
         this.code = code;
         this.name = name;
     }
+
+    protected CountryViewModel(Parcel in) {
+        code = in.readString();
+        name = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(code);
+        dest.writeString(name);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<CountryViewModel> CREATOR = new Creator<CountryViewModel>() {
+        @Override
+        public CountryViewModel createFromParcel(Parcel in) {
+            return new CountryViewModel(in);
+        }
+
+        @Override
+        public CountryViewModel[] newArray(int size) {
+            return new CountryViewModel[size];
+        }
+    };
 
     public String getCode() {
         return code;

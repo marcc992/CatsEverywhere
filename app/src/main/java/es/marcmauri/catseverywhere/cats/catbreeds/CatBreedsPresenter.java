@@ -2,6 +2,8 @@ package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
 import es.marcmauri.catseverywhere.cats.CountryViewModel;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
@@ -15,7 +17,6 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
     private CatBreedsMVP.Model model;
 
     private Disposable getDataSubscription = null;
-    private Disposable getCountriesSubscription = null;
 
     public CatBreedsPresenter(CatBreedsMVP.Model model) {
         this.model = model;
@@ -23,46 +24,25 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
 
     @Override
-    public void loadCountries() {
-        getDataSubscription = model.getCountries()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<CountryViewModel>() {
-                    @Override
-                    public void onNext(CountryViewModel country) {
-                        if (view != null) {
-                            view.updateSpinner(country);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        if (view != null) {
-                            view.hiddenProgressBar();
-                            view.showSnackBar("Error fetching cat breed countries...");
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        if (view != null) {
-                            view.hiddenProgressBar();
-                            view.showSnackBar("Cat breed countries fetched successfully!");
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void loadAllData() {
+    public void loadCatBreedsFromPage(int pageNumber) {
         if (view != null) {
             view.showProgressBar();
         }
 
-        getDataSubscription = model.getCatBreedsData()
+        getDataSubscription = model.getCatBreedsData(pageNumber)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .switchIfEmpty(new Observable<CatBreedViewModel>() {
+                    @Override
+                    protected void subscribeActual(Observer<? super CatBreedViewModel> observer) {
+                        // If no more cats from server, we configure the view for not more requests
+                        if (view != null) {
+                            view.hiddenProgressBar();
+                            view.updateIfExistMoreCats(false);
+                            view.showSnackBar("No more cats to show!");
+                        }
+                    }
+                })
                 .subscribeWith(new DisposableObserver<CatBreedViewModel>() {
 
                     @Override
@@ -84,6 +64,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                     @Override
                     public void onComplete() {
                         if (view != null) {
+                            //5. On complete, hidden the progress bar
                             view.hiddenProgressBar();
                             view.showSnackBar("Cat breeds data fetched successfully!");
                         }

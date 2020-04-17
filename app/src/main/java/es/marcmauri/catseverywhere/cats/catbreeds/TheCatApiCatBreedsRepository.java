@@ -3,13 +3,16 @@ package es.marcmauri.catseverywhere.cats.catbreeds;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import es.marcmauri.catseverywhere.http.TheCatApiService;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatBreedApi;
 import es.marcmauri.catseverywhere.http.apimodel.thecat.CatImageApi;
 import io.reactivex.Observable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
@@ -20,17 +23,9 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
 
     private TheCatApiService theCatApiService;
 
-    // todo: el objeto sera el propietario del servidor
-    private List<CatBreedApi> catBreedList;
-    private List<String> imageUrls;
-    private List<CountryViewModel> catBreedCountryList = new ArrayList<>();
-    private List<CountryViewModel> mockCountries = new ArrayList<CountryViewModel>(){{
-        add(new CountryViewModel("all", "All"));
-        add(new CountryViewModel("EG", "Egypt"));
-        add(new CountryViewModel("US", "United States"));
-        add(new CountryViewModel("AE", "United Arab Emirates"));
-        add(new CountryViewModel("AU", "Australia"));
-    }};
+    // Each map contains data from a specified page number
+    private Map<Integer, List<CatBreedApi>> catBreedListMap;
+    private Map<Integer, List<String>> imageUrlListMap;
 
     private long lastTimestamp;
 
@@ -40,8 +35,8 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
 
         this.lastTimestamp = System.currentTimeMillis();
 
-        this.catBreedList = new ArrayList<>();
-        this.imageUrls = new ArrayList<>();
+        this.catBreedListMap = new HashMap<>();
+        this.imageUrlListMap = new HashMap<>();
     }
 
     private boolean isUpdated() {
@@ -49,36 +44,9 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
     }
 
     @Override
-    public Observable<CountryViewModel> getCatBreedCountriesFromNetwork() {
-        return Observable.fromIterable(mockCountries)
-                .doOnNext(new Consumer<CountryViewModel>() {
-                    @Override
-                    public void accept(CountryViewModel country) throws Exception {
-                        catBreedCountryList.add(country);
-                    }
-                });
-    }
+    public Observable<CatBreedApi> getCatBreedFromNetwork(int pageNumber) {
 
-    @Override
-    public Observable<CountryViewModel> getCatBreedCountriesFromCache() {
-        if (isUpdated()) {
-            return Observable.fromIterable(catBreedCountryList);
-        } else {
-            lastTimestamp = System.currentTimeMillis();
-            catBreedCountryList.clear();
-            return Observable.empty();
-        }
-    }
-
-    @Override
-    public Observable<CountryViewModel> getCatBreedCountriesData() {
-        return getCatBreedCountriesFromCache().switchIfEmpty(getCatBreedCountriesFromNetwork());
-    }
-
-    @Override
-    public Observable<CatBreedApi> getCatBreedFromNetwork() {
-
-        Observable<List<CatBreedApi>> allCatBreedsObservable = theCatApiService.getAllCatBreeds(0, 50);
+        Observable<List<CatBreedApi>> allCatBreedsObservable = theCatApiService.getAllCatBreeds(pageNumber, 20);
 
         return allCatBreedsObservable
                 .concatMap(new Function<List<CatBreedApi>, Observable<CatBreedApi>>() {
@@ -89,31 +57,50 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
                 })
                 .doOnNext(new Consumer<CatBreedApi>() {
                     @Override
-                    public void accept(CatBreedApi catBreedApi) throws Exception {
-                        catBreedList.add(catBreedApi);
+                    public void accept(CatBreedApi catBreedApi) {
+                        List<CatBreedApi> currentList = catBreedListMap.get(pageNumber);
+                        if (currentList == null) {
+                            currentList = new ArrayList<>();
+                        }
+                        currentList.add(catBreedApi);
+                        catBreedListMap.put(pageNumber, currentList);
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() {
+                        Log.i("TAG", "CatBreeds obtained from Network");
                     }
                 });
     }
 
     @Override
-    public Observable<CatBreedApi> getCatBreedFromCache() {
-        if (isUpdated()) {
-            return Observable.fromIterable(catBreedList);
+    public Observable<CatBreedApi> getCatBreedFromCache(int pageNumber) {
+        if (isUpdated() && catBreedListMap.containsKey(pageNumber)) {
+            Log.i(TAG, "CatBreeds obtained from Cache");
+
+            try {
+                return Observable.fromIterable(Objects.requireNonNull(catBreedListMap.get(pageNumber)));
+            } catch (NullPointerException npe) {
+                Log.w(TAG, "getCatBreedFromCache(..) -> catBreedListMap.get(" +
+                        pageNumber + ") returns a NullPointerException. Message: " + npe.toString());
+                return Observable.empty();
+            }
         } else {
             lastTimestamp = System.currentTimeMillis();
-            catBreedList.clear();
+            catBreedListMap.remove(pageNumber);
             return Observable.empty();
         }
     }
 
     @Override
-    public Observable<CatBreedApi> getCatBreedData() {
-        return getCatBreedFromCache().switchIfEmpty(getCatBreedFromNetwork());
+    public Observable<CatBreedApi> getCatBreedData(int pageNumber) {
+        return getCatBreedFromCache(pageNumber).switchIfEmpty(getCatBreedFromNetwork(pageNumber));
     }
 
     @Override
-    public Observable<String> getCatBreedImageUrlFromNetwork() {
-        return getCatBreedFromNetwork()
+    public Observable<String> getCatBreedImageUrlFromNetwork(int pageNumber) {
+        return getCatBreedFromNetwork(pageNumber)
                 .concatMap(new Function<CatBreedApi, Observable<List<CatImageApi>>>() {
                     @Override
                     public Observable<List<CatImageApi>> apply(CatBreedApi catBreedApi) {
@@ -144,25 +131,39 @@ public class TheCatApiCatBreedsRepository implements CatBreedsRepository {
                 .doOnNext(new Consumer<String>() {
                     @Override
                     public void accept(String url) throws Exception {
-                        imageUrls.add(url);
+                        List<String> currentList = imageUrlListMap.get(pageNumber);
+                        if (currentList == null) {
+                            currentList = new ArrayList<>();
+                        }
+                        currentList.add(url);
+                        imageUrlListMap.put(pageNumber, currentList);
                     }
                 });
     }
 
     @Override
-    public Observable<String> getCatBreedImageUrlFromCache() {
-        if (isUpdated()) {
-            return Observable.fromIterable(imageUrls);
+    public Observable<String> getCatBreedImageUrlFromCache(int pageNumber) {
+
+
+        if (isUpdated() && imageUrlListMap.containsKey(pageNumber)) {
+            Log.i(TAG, "CatBreeds obtained from Cache");
+            try {
+                return Observable.fromIterable(Objects.requireNonNull(imageUrlListMap.get(pageNumber)));
+            } catch (NullPointerException npe) {
+                Log.w(TAG, "getCatBreedImageUrlFromCache(..) -> imageUrlListMap.get(" +
+                        pageNumber + ") returns a NullPointerException. Message: " + npe.toString());
+                return Observable.empty();
+            }
         } else {
             lastTimestamp = System.currentTimeMillis();
-            imageUrls.clear();
+            imageUrlListMap.remove(pageNumber);
             return Observable.empty();
         }
     }
 
     @Override
-    public Observable<String> getCatBreedImageUrl() {
-        return getCatBreedImageUrlFromCache().switchIfEmpty(getCatBreedImageUrlFromNetwork());
+    public Observable<String> getCatBreedImageUrl(int pageNumber) {
+        return getCatBreedImageUrlFromCache(pageNumber).switchIfEmpty(getCatBreedImageUrlFromNetwork(pageNumber));
     }
 
 }

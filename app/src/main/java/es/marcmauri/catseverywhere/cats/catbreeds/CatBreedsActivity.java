@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -20,7 +19,6 @@ import com.example.catseverywhere.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -51,12 +49,15 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     @Inject
     CatBreedsMVP.Presenter presenter;
 
+    private boolean existMoreCats;
+    private int currentPage;
+
     private CatBreedListAdapter catBreedListAdapter;
-    private List<CatBreedViewModel> catBreedList = new ArrayList<>();
+    private ArrayList<CatBreedViewModel> catBreedList = new ArrayList<>();
     // TODO: Make CustomSpinnerAdapter<>
-    private ArrayAdapter<String> spinnerAdapter;
-    private List<CountryViewModel> catBreedCountries = new ArrayList<>();
-    private List<String> catBreedCountriesSpinner = new ArrayList<>();
+    //private ArrayAdapter<String> spinnerAdapter;
+    //private ArrayList<CountryViewModel> catBreedCountries = new ArrayList<>();
+    //private ArrayList<String> catBreedCountriesSpinner = new ArrayList<>();
 
 
     @Override
@@ -70,6 +71,15 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
         ((App) getApplication()).getComponent().inject(this);
 
+        if (savedInstanceState != null) {
+            existMoreCats = savedInstanceState.getBoolean("myExistMoreCats");
+            currentPage = savedInstanceState.getInt("myCurrentPage");
+            catBreedList = savedInstanceState.getParcelableArrayList("myCatBreeds");
+        } else {
+            existMoreCats = true;
+            currentPage = 0;
+        }
+/*
         spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 catBreedCountriesSpinner);
@@ -85,7 +95,7 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
+*/
         catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(CatBreedViewModel catBreed, int position) {
@@ -97,27 +107,96 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+
+                if (dy > 0) {
+                    if ((progressBar.getVisibility() != View.VISIBLE)
+                            && ((totalItemCount - visibleItemCount) <= pastVisibleItems)) {
+                        if (existMoreCats) {
+                            presenter.loadCatBreedsFromPage(++currentPage);
+                        }
+                        // else means No more cats to show
+                    }
+                }
+            }
+        });
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume()");
+
         presenter.setView(this);
-        presenter.loadCountries();
-        presenter.loadAllData();
+
+        if (catBreedList.isEmpty()) {
+            Log.i(TAG, "catBreedList is empty !!");
+            currentPage = 0;
+            presenter.loadCatBreedsFromPage(currentPage);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i(TAG, "onStop()");
+
+        // If the progresBarr is Visible in this point, it means that we are changing the activity
+        // then, we need to stop receiving data and delete the more fresh elements from the catBreeds List
+        // Remember the follow:
+        // 1 => onSaveInstanceState() // Only when screen parameters changed: rotate, textSize, ...
+        // 2 => onStop() // Always
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            // TODO: Remove the elements which are fetching from the presenter
+        } else {
+            hiddenProgressBar();
+        }
+
         presenter.rxJavaUnsubscribe();
-        catBreedCountries.clear();
-        catBreedCountriesSpinner.clear();
-        spinnerAdapter.notifyDataSetChanged();
-        catBreedList.clear();
-        catBreedListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState()");
+
+        outState.putBoolean("myExistMoreCats", existMoreCats);
+        Log.i(TAG, "Total Cat breed pages saved to Bundle! Value = " + existMoreCats);
+
+        outState.putInt("myCurrentPage", currentPage);
+        Log.i(TAG, "Current page saved to Bundle! Value = " + currentPage);
+
+        // If the progresBarr is Visible in this point, it means that we are changing the appearance
+        // of the current activity / screen.
+        // Then, we need to stop receiving data and delete the more fresh elements from the catBreeds
+        // lest before save them in the Bundle
+        // Remember the follow:
+        // 1 => onSaveInstanceState()
+        // 2 => onStop()
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            // TODO: Remove the elements which are fetching from the presenter
+        } else {
+            hiddenProgressBar();
+        }
+
+        outState.putParcelableArrayList("myCatBreeds", catBreedList);
+        Log.i(TAG, "Cat breed List saved to Bundle! size = " + catBreedList.size());
+    }
+
+    @Override
+    public void updateIfExistMoreCats(boolean moreCats) {
+        this.existMoreCats = moreCats;
     }
 
     @Override
@@ -129,9 +208,9 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     @Override
     public void updateSpinner(CountryViewModel country) {
-        catBreedCountries.add(country);
-        catBreedCountriesSpinner.add(country.getName());
-        spinnerAdapter.notifyDataSetChanged();
+        //catBreedCountries.add(country);
+        //catBreedCountriesSpinner.add(country.getName());
+        //spinnerAdapter.notifyDataSetChanged();
         Log.d(TAG, "New country inserted: " + country);
     }
 

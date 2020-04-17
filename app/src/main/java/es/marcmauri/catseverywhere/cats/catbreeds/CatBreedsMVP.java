@@ -1,7 +1,5 @@
 package es.marcmauri.catseverywhere.cats.catbreeds;
 
-import java.util.List;
-
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
 import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import io.reactivex.Observable;
@@ -9,6 +7,7 @@ import io.reactivex.Observable;
 public interface CatBreedsMVP {
 
     interface View {
+        void updateIfExistMoreCats(boolean moreCats);
         void updateData(CatBreedViewModel viewModel);
         void updateSpinner(CountryViewModel country);
 
@@ -20,9 +19,7 @@ public interface CatBreedsMVP {
     }
 
     interface Presenter {
-        void loadCountries();
-        void loadAllData();
-        //void loadDataByCountry(String country_code);
+        void loadCatBreedsFromPage(int pageNumber);
 
         void onCatBreedCountryClicked(CountryViewModel country);
         void onCatBreedItemClicked(CatBreedViewModel catBreed);
@@ -33,7 +30,6 @@ public interface CatBreedsMVP {
     }
 
     interface Model {
-        Observable<CatBreedViewModel> getCatBreedsData();
-        Observable<CountryViewModel> getCountries();
+        Observable<CatBreedViewModel> getCatBreedsData(int pageNumber);
     }
 }

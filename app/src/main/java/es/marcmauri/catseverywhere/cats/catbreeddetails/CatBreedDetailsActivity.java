@@ -77,7 +77,7 @@ public class CatBreedDetailsActivity extends AppCompatActivity implements CatBre
             Log.w(TAG, "The cat breed url is empty");
         } else {
             Picasso.get().load(url)
-                    .fit().centerCrop(Gravity.TOP)
+                    .fit().centerInside()
                     .into(imageView_breed);
         }
     }
