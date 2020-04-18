@@ -202,10 +202,8 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
                 presenter.onRecyclerViewScrolled(layoutManager.getChildCount(), layoutManager.getItemCount(),
                         layoutManager.findFirstVisibleItemPosition(), dy);
-
             }
         });
     }
@@ -223,6 +221,11 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     @Override
     public boolean getIfAllCatsObtained() {
         return this.allCatsObtained;
+    }
+
+    @Override
+    public int getSpinnerSelectedItemPosition() {
+        return this.spinner.getSelectedItemPosition();
     }
 
     @Override
@@ -244,9 +247,9 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     public void updateCatBreedsData(CatBreedViewModel catBreed) {
         catBreedList.add(catBreed);
         catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
-        Log.d(TAG, "New item inserted: " + catBreed.getBreedName());
+        Log.d(TAG, "New item inserted: " + catBreed.getName());
 
-        updateSpinnerData(catBreed.getBreedCountryName());
+        updateSpinnerData(catBreed.getCountryName());
     }
 
     private void updateSpinnerData(String country) {
@@ -282,8 +285,8 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     }
 
     @Override
-    public void showSnackBar(String message) {
-        Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
+    public void showSnackBar(String message, boolean longTime) {
+        Snackbar.make(rootView, message, longTime ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

@@ -43,7 +43,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                         if (view != null) {
                             view.hiddenProgressBar();
                             view.setIfAllCatsObtained(true);
-                            view.showSnackBar("No more cats to show!");
+                            view.showSnackBar("No more cats to show!", false);
                         }
                     }
                 })
@@ -61,7 +61,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                         e.printStackTrace();
                         if (view != null) {
                             view.hiddenProgressBar();
-                            view.showSnackBar("Error fetching cat breeds...");
+                            view.showSnackBar("Error fetching cat breeds...", false);
                         }
                     }
 
@@ -81,10 +81,16 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
             if (dy > 0) {
                 if ((view.getProgressVisibility() != View.VISIBLE)
                         && ((totalItemCount - visibleItemCount) <= pastVisibleItems)) {
+
                     if (!view.getIfAllCatsObtained()) {
-                        int currentPage = view.getCurrentPage();
-                        loadCatBreedsFromPage(++currentPage);
-                        view.setCurrentPage(currentPage);
+
+                        if (view.getSpinnerSelectedItemPosition() == 0) {
+                            int currentPage = view.getCurrentPage();
+                            loadCatBreedsFromPage(++currentPage);
+                            view.setCurrentPage(currentPage);
+                        } else {
+                            view.showSnackBar("To obtain new cat breeds, please, remove the country filter.", true);
+                        }
                     }
                 }
             }

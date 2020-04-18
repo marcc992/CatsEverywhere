@@ -4,50 +4,50 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CatBreedViewModel implements Parcelable {
-    private String breedId;
-    private String breedName;
-    private String breedDescription;
-    private String breedCountryCode;
-    private String breedCountryName;
-    private String breedTemperament;
-    private String breedWikipediaUrl;
-    private String breedImageUrl;
+    private String id;
+    private String name;
+    private String description;
+    private String countryCode;
+    private String countryName;
+    private String temperament;
+    private String wikipediaUrl;
+    private String imageUrl;
 
-    public CatBreedViewModel(String breedId, String breedName, String breedDescription,
-                             String breedCountryCode, String breedCountryName,
-                             String breedTemperament, String breedWikipediaUrl,
-                             String breedImageUrl) {
-        this.breedId = breedId;
-        this.breedName = breedName;
-        this.breedDescription = breedDescription;
-        this.breedCountryCode = breedCountryCode;
-        this.breedCountryName = breedCountryName;
-        this.breedTemperament = breedTemperament;
-        this.breedWikipediaUrl = breedWikipediaUrl;
-        this.breedImageUrl = breedImageUrl;
+    public CatBreedViewModel(String id, String name, String description,
+                             String countryCode, String countryName,
+                             String temperament, String wikipediaUrl,
+                             String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.countryCode = countryCode;
+        this.countryName = countryName;
+        this.temperament = temperament;
+        this.wikipediaUrl = wikipediaUrl;
+        this.imageUrl = imageUrl;
     }
 
     protected CatBreedViewModel(Parcel in) {
-        breedId = in.readString();
-        breedName = in.readString();
-        breedDescription = in.readString();
-        breedCountryCode = in.readString();
-        breedCountryName = in.readString();
-        breedTemperament = in.readString();
-        breedWikipediaUrl = in.readString();
-        breedImageUrl = in.readString();
+        id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        countryCode = in.readString();
+        countryName = in.readString();
+        temperament = in.readString();
+        wikipediaUrl = in.readString();
+        imageUrl = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(breedId);
-        dest.writeString(breedName);
-        dest.writeString(breedDescription);
-        dest.writeString(breedCountryCode);
-        dest.writeString(breedCountryName);
-        dest.writeString(breedTemperament);
-        dest.writeString(breedWikipediaUrl);
-        dest.writeString(breedImageUrl);
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(countryCode);
+        dest.writeString(countryName);
+        dest.writeString(temperament);
+        dest.writeString(wikipediaUrl);
+        dest.writeString(imageUrl);
     }
 
     @Override
@@ -67,67 +67,67 @@ public class CatBreedViewModel implements Parcelable {
         }
     };
 
-    public String getBreedId() {
-        return breedId;
+    public String getId() {
+        return id;
     }
 
-    public void setBreedId(String breedId) {
-        this.breedId = breedId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getBreedName() {
-        return breedName;
+    public String getName() {
+        return name;
     }
 
-    public void setBreedName(String breedName) {
-        this.breedName = breedName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getBreedDescription() {
-        return breedDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBreedDescription(String breedDescription) {
-        this.breedDescription = breedDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getBreedCountryCode() {
-        return breedCountryCode;
+    public String getCountryCode() {
+        return countryCode;
     }
 
-    public void setBreedCountryCode(String breedCountryCode) {
-        this.breedCountryCode = breedCountryCode;
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
-    public String getBreedCountryName() {
-        return breedCountryName;
+    public String getCountryName() {
+        return countryName;
     }
 
-    public void setBreedCountryName(String breedCountryName) {
-        this.breedCountryName = breedCountryName;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
-    public String getBreedTemperament() {
-        return breedTemperament;
+    public String getTemperament() {
+        return temperament;
     }
 
-    public void setBreedTemperament(String breedTemperament) {
-        this.breedTemperament = breedTemperament;
+    public void setTemperament(String temperament) {
+        this.temperament = temperament;
     }
 
-    public String getBreedWikipediaUrl() {
-        return breedWikipediaUrl;
+    public String getWikipediaUrl() {
+        return wikipediaUrl;
     }
 
-    public void setBreedWikipediaUrl(String breedWikipediaUrl) {
-        this.breedWikipediaUrl = breedWikipediaUrl;
+    public void setWikipediaUrl(String wikipediaUrl) {
+        this.wikipediaUrl = wikipediaUrl;
     }
 
-    public String getBreedImageUrl() {
-        return breedImageUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setBreedImageUrl(String breedImageUrl) {
-        this.breedImageUrl = breedImageUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

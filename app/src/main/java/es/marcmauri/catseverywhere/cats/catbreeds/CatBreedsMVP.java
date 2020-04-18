@@ -9,6 +9,7 @@ public interface CatBreedsMVP {
         int getCurrentPage();
         int getProgressVisibility();
         boolean getIfAllCatsObtained();
+        int getSpinnerSelectedItemPosition();
 
         void setCurrentPage(int page);
         void setIfAllCatsObtained(boolean allObtained);
@@ -18,7 +19,7 @@ public interface CatBreedsMVP {
 
         void showProgressBar();
         void hiddenProgressBar();
-        void showSnackBar(String message);
+        void showSnackBar(String message, boolean longTime);
 
         void navigateToCatBreedDetailsScreen(CatBreedViewModel catBreed);
     }

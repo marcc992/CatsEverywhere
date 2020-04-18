@@ -44,12 +44,12 @@ public class CatBreedDetailsPresenter implements CatBreedDetailsMVP.Presenter {
                 catBreed = model.getUndefinedCatBreed();
             }
 
-            view.setImage(catBreed.getBreedImageUrl());
-            view.setName(catBreed.getBreedName());
-            view.setDescription(catBreed.getBreedDescription());
-            view.setCountryCode(catBreed.getBreedCountryCode());
-            view.setTemperament(catBreed.getBreedTemperament());
-            view.setLink(catBreed.getBreedWikipediaUrl());
+            view.setImage(catBreed.getImageUrl());
+            view.setName(catBreed.getName());
+            view.setDescription(catBreed.getDescription());
+            view.setCountryCode(catBreed.getCountryCode());
+            view.setTemperament(catBreed.getTemperament());
+            view.setLink(catBreed.getWikipediaUrl());
 
             view.hiddenProgressBar();
         }

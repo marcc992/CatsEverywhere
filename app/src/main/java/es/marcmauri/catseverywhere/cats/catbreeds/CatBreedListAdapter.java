@@ -78,15 +78,15 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
     @Override
     public void onBindViewHolder(@NonNull ListItemViewHolder holder, int position) {
         final CatBreedViewModel catBreed = catBreedListFiltered.get(position);
-        Log.d(TAG, "Image fetched from breed " + catBreed.getBreedName() + " => " + catBreed.getBreedImageUrl());
+        Log.d(TAG, "Image fetched from breed " + catBreed.getName() + " => " + catBreed.getImageUrl());
 
-        holder.catBreedName.setText(catBreed.getBreedName());
-        holder.catBreedDescription.setText(catBreed.getBreedDescription());
+        holder.catBreedName.setText(catBreed.getName());
+        holder.catBreedDescription.setText(catBreed.getDescription());
 
-        if (catBreed.getBreedImageUrl().isEmpty()) {
-            Log.w(TAG, "The cat breed " + catBreed.getBreedName() + " has no image");
+        if (catBreed.getImageUrl().isEmpty()) {
+            Log.w(TAG, "The cat breed " + catBreed.getName() + " has no image");
         } else {
-            Picasso.get().load(catBreed.getBreedImageUrl())
+            Picasso.get().load(catBreed.getImageUrl())
                     .fit().centerCrop()
                     .into(holder.catBreedImage);
         }
@@ -110,7 +110,7 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
                     for (CatBreedViewModel catBreed : catBreedList) {
 
                         // country match condition
-                        if (catBreed.getBreedCountryName().contains(country)) {
+                        if (catBreed.getCountryName().contains(country)) {
                             filteredList.add(catBreed);
                         }
                     }
