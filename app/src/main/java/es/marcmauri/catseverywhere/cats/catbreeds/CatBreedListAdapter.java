@@ -53,7 +53,7 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(catBreedList.get(getAdapterPosition()), getAdapterPosition());
+                    listener.onItemClick(catBreedListFiltered.get(getAdapterPosition()));
                 }
             });
         }
@@ -135,6 +135,6 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
 
 
     public interface OnItemClickListener {
-        void onItemClick(CatBreedViewModel catBreed, int position);
+        void onItemClick(CatBreedViewModel catBreed);
     }
 }

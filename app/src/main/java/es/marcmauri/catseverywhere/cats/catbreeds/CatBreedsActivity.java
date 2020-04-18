@@ -54,13 +54,14 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     @Inject
     CatBreedsMVP.Presenter presenter;
 
-    private boolean allCatsObtained;
     private int currentPage;
+    private boolean allCatsObtained;
+    private boolean pendingLoad;
 
     private CatBreedListAdapter catBreedListAdapter;
     private ArrayList<CatBreedViewModel> catBreedList = new ArrayList<>();
+    private Map<String, Boolean> isCatBredInList = new HashMap<>();
 
-    // todo: Remove CountryViewModel => We just need the country name
     private ArrayAdapter<String> catBreedCountrySpinnerAdapter;
     private ArrayList<String> catBreedCountryList;
     private Map<String, Boolean> isCountryInSpinner = new HashMap<>();
@@ -78,11 +79,13 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         ((App) getApplication()).getComponent().inject(this);
 
         if (savedInstanceState != null) {
+            pendingLoad = savedInstanceState.getBoolean("myPendingLoad");
             allCatsObtained = savedInstanceState.getBoolean("myAllCatsObtained");
             currentPage = savedInstanceState.getInt("myCurrentPage");
             catBreedList = savedInstanceState.getParcelableArrayList("myCatBreeds");
             catBreedCountryList = savedInstanceState.getStringArrayList("myCatBreedCountries");
         } else {
+            pendingLoad = false;
             allCatsObtained = false;
             currentPage = 0;
         }
@@ -99,6 +102,12 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
             }
         }
 
+        // Save current catBreeds in a map. It will be needed if the activity stopped while
+        // fetching cat Breeds from server
+        for (CatBreedViewModel catBreed : catBreedList) {
+            isCatBredInList.put(catBreed.getId(), true);
+        }
+
         setSpinner();
         setRecyclerView();
     }
@@ -113,7 +122,11 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         if (catBreedList.isEmpty()) {
             Log.i(TAG, "catBreedList is empty !!");
             currentPage = 0;
-            presenter.loadCatBreedsFromPage(currentPage);
+            presenter.loadCatBreedsFromPage(currentPage, false);
+        } else if (pendingLoad) {
+            // The activity has closed while it was fetching data from server
+            Log.i(TAG, "catBreedList needs to refresh with the last loading from server !!");
+            presenter.loadCatBreedsFromPage(currentPage, true);
         }
     }
 
@@ -122,16 +135,7 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         super.onStop();
         Log.i(TAG, "onStop()");
 
-        // If the progresBarr is Visible in this point, it means that we are changing the activity
-        // then, we need to stop receiving data and delete the more fresh elements from the catBreeds List
-        // Remember the follow:
-        // 1 => onSaveInstanceState() // Only when screen parameters changed: rotate, textSize, ...
-        // 2 => onStop() // Always
-        if (progressBar.getVisibility() == View.VISIBLE) {
-            // TODO: Remove the elements which are fetching from the presenter
-        } else {
-            hiddenProgressBar();
-        }
+        hiddenProgressBar();
 
         presenter.rxJavaUnsubscribe();
     }
@@ -141,24 +145,21 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState()");
 
-        outState.putBoolean("myAllCatsObtained", allCatsObtained);
-        Log.i(TAG, "AllCatsObtained? saved to Bundle! Value = " + allCatsObtained);
+        // If progress is visible => Data load from server is running
+        if (getProgressVisibility() == View.VISIBLE) {
+            pendingLoad = true;
+        } else {
+            pendingLoad = false;
+        }
 
         outState.putInt("myCurrentPage", currentPage);
         Log.i(TAG, "Current page saved to Bundle! Value = " + currentPage);
 
-        // If the progresBarr is Visible in this point, it means that we are changing the appearance
-        // of the current activity / screen.
-        // Then, we need to stop receiving data and delete the more fresh elements from the catBreeds
-        // lest before save them in the Bundle
-        // Remember the follow:
-        // 1 => onSaveInstanceState()
-        // 2 => onStop()
-        if (progressBar.getVisibility() == View.VISIBLE) {
-            // TODO: Remove the elements which are fetching from the presenter
-        } else {
-            hiddenProgressBar();
-        }
+        outState.putBoolean("myPendingLoad", pendingLoad);
+        Log.i(TAG, "Cat Breeds loading right now? saved to Bundle! Value = " + pendingLoad);
+
+        outState.putBoolean("myAllCatsObtained", allCatsObtained);
+        Log.i(TAG, "AllCatsObtained? saved to Bundle! Value = " + allCatsObtained);
 
         outState.putParcelableArrayList("myCatBreeds", catBreedList);
         Log.i(TAG, "Cat breed List saved to Bundle! size = " + catBreedList.size());
@@ -187,7 +188,7 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     private void setRecyclerView() {
         catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(CatBreedViewModel catBreed, int position) {
+            public void onItemClick(CatBreedViewModel catBreed) {
                 presenter.onCatBreedItemClicked(catBreed);
             }
         });
@@ -245,11 +246,18 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     @Override
     public void updateCatBreedsData(CatBreedViewModel catBreed) {
-        catBreedList.add(catBreed);
-        catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
-        Log.d(TAG, "New item inserted: " + catBreed.getName());
+        if (!isCatBredInList.containsKey(catBreed.getId())) {
+            isCatBredInList.put(catBreed.getId(), true);
 
-        updateSpinnerData(catBreed.getCountryName());
+            catBreedList.add(catBreed);
+            catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
+
+            Log.d(TAG, "New item inserted: " + catBreed.getName());
+
+            updateSpinnerData(catBreed.getCountryName());
+        } else {
+            Log.d(TAG, "This cat breed already exists: " + catBreed.getName());
+        }
     }
 
     private void updateSpinnerData(String country) {

@@ -27,4 +27,18 @@ public class CatBreedsModel implements CatBreedsMVP.Model {
                     }
                 });
     }
+
+    @Override
+    public Observable<CatBreedViewModel> reloadCatBreedsData(int pageNumber) {
+        return Observable.zip(catBreedsRepository.getCatBreedFromNetwork(pageNumber), catBreedsRepository.getCatBreedImageUrlFromNetwork(pageNumber),
+                new BiFunction<CatBreedApi, String, CatBreedViewModel>() {
+                    @Override
+                    public CatBreedViewModel apply(CatBreedApi catBreedApi, String imageUrl) {
+                        return new CatBreedViewModel(catBreedApi.getId(), catBreedApi.getName(),
+                                catBreedApi.getDescription(), catBreedApi.getCountryCode(),
+                                catBreedApi.getOrigin(), catBreedApi.getTemperament(),
+                                catBreedApi.getWikipediaUrl(), imageUrl);
+                    }
+                });
+    }
 }

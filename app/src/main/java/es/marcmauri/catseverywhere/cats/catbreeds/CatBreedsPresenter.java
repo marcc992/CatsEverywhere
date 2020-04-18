@@ -28,12 +28,15 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
 
     @Override
-    public void loadCatBreedsFromPage(int pageNumber) {
+    public void loadCatBreedsFromPage(int pageNumber, boolean reload) {
         if (view != null) {
             view.showProgressBar();
         }
 
-        getDataSubscription = model.getCatBreedsData(pageNumber)
+        Observable<CatBreedViewModel> observable = reload ?
+                model.reloadCatBreedsData(pageNumber) : model.getCatBreedsData(pageNumber);
+
+        getDataSubscription = observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchIfEmpty(new Observable<CatBreedViewModel>() {
@@ -86,7 +89,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
 
                         if (view.getSpinnerSelectedItemPosition() == 0) {
                             int currentPage = view.getCurrentPage();
-                            loadCatBreedsFromPage(++currentPage);
+                            loadCatBreedsFromPage(++currentPage, false);
                             view.setCurrentPage(currentPage);
                         } else {
                             view.showSnackBar("To obtain new cat breeds, please, remove the country filter.", true);

@@ -25,7 +25,7 @@ public interface CatBreedsMVP {
     }
 
     interface Presenter {
-        void loadCatBreedsFromPage(int pageNumber);
+        void loadCatBreedsFromPage(int pageNumber, boolean reload);
 
         void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int pastVisibleItems, int dy);
         void onCatBreedCountryClicked(String selectedCountry, String allCountriesValue);
@@ -38,5 +38,6 @@ public interface CatBreedsMVP {
 
     interface Model {
         Observable<CatBreedViewModel> getCatBreedsData(int pageNumber);
+        Observable<CatBreedViewModel> reloadCatBreedsData(int pageNumber);
     }
 }
