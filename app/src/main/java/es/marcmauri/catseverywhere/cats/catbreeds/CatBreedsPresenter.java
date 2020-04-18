@@ -1,7 +1,9 @@
 package es.marcmauri.catseverywhere.cats.catbreeds;
 
+import android.util.Log;
+import android.view.View;
+
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
-import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -11,6 +13,8 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
+
+    private static final String TAG = CatBreedsPresenter.class.getName();
 
     @Nullable
     private CatBreedsMVP.View view;
@@ -38,7 +42,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                         // If no more cats from server, we configure the view for not more requests
                         if (view != null) {
                             view.hiddenProgressBar();
-                            view.updateIfExistMoreCats(false);
+                            view.setIfAllCatsObtained(true);
                             view.showSnackBar("No more cats to show!");
                         }
                     }
@@ -48,7 +52,7 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                     @Override
                     public void onNext(CatBreedViewModel catBreedViewModel) {
                         if (view != null) {
-                            view.updateData(catBreedViewModel);
+                            view.updateCatBreedsData(catBreedViewModel);
                         }
                     }
 
@@ -64,20 +68,40 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
                     @Override
                     public void onComplete() {
                         if (view != null) {
-                            //5. On complete, hidden the progress bar
                             view.hiddenProgressBar();
-                            view.showSnackBar("Cat breeds data fetched successfully!");
+                            //view.showSnackBar("Cat breeds data fetched successfully!");
                         }
                     }
                 });
     }
 
     @Override
-    public void onCatBreedCountryClicked(String country) {
+    public void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int pastVisibleItems, int dy) {
         if (view != null) {
-            view.showSnackBar("Country: " + country);
+            if (dy > 0) {
+                if ((view.getProgressVisibility() != View.VISIBLE)
+                        && ((totalItemCount - visibleItemCount) <= pastVisibleItems)) {
+                    if (!view.getIfAllCatsObtained()) {
+                        int currentPage = view.getCurrentPage();
+                        loadCatBreedsFromPage(++currentPage);
+                        view.setCurrentPage(currentPage);
+                    }
+                }
+            }
         }
-        // TODO: Implementar carga de razas por pais
+
+    }
+
+    @Override
+    public void onCatBreedCountryClicked(String selectedCountry, String allCountriesValue) {
+        Log.i(TAG, "Country to filter list: " + selectedCountry);
+        if (selectedCountry.equalsIgnoreCase(allCountriesValue)) {
+            // If All countries selected then remove any filter
+            selectedCountry = "";
+        }
+        if (view != null) {
+            view.setListFilter(selectedCountry);
+        }
     }
 
     @Override

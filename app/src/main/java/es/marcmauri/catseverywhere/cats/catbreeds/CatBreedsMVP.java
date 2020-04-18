@@ -1,15 +1,20 @@
 package es.marcmauri.catseverywhere.cats.catbreeds;
 
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
-import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import io.reactivex.Observable;
 
 public interface CatBreedsMVP {
 
     interface View {
-        void updateIfExistMoreCats(boolean moreCats);
-        void updateData(CatBreedViewModel viewModel);
-        void updateSpinner(CountryViewModel country);
+        int getCurrentPage();
+        int getProgressVisibility();
+        boolean getIfAllCatsObtained();
+
+        void setCurrentPage(int page);
+        void setIfAllCatsObtained(boolean allObtained);
+        void setListFilter(String constraint);
+
+        void updateCatBreedsData(CatBreedViewModel catBreed);
 
         void showProgressBar();
         void hiddenProgressBar();
@@ -21,7 +26,8 @@ public interface CatBreedsMVP {
     interface Presenter {
         void loadCatBreedsFromPage(int pageNumber);
 
-        void onCatBreedCountryClicked(String country);
+        void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int pastVisibleItems, int dy);
+        void onCatBreedCountryClicked(String selectedCountry, String allCountriesValue);
         void onCatBreedItemClicked(CatBreedViewModel catBreed);
 
         void rxJavaUnsubscribe();

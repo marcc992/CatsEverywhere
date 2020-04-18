@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.marcmauri.catseverywhere.cats.CatBreedViewModel;
-import es.marcmauri.catseverywhere.cats.CountryViewModel;
 import es.marcmauri.catseverywhere.cats.catbreeddetails.CatBreedDetailsActivity;
 import es.marcmauri.catseverywhere.common.ExtraTags;
 import es.marcmauri.catseverywhere.root.App;
@@ -55,7 +54,7 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
     @Inject
     CatBreedsMVP.Presenter presenter;
 
-    private boolean existMoreCats;
+    private boolean allCatsObtained;
     private int currentPage;
 
     private CatBreedListAdapter catBreedListAdapter;
@@ -79,12 +78,12 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         ((App) getApplication()).getComponent().inject(this);
 
         if (savedInstanceState != null) {
-            existMoreCats = savedInstanceState.getBoolean("myExistMoreCats");
+            allCatsObtained = savedInstanceState.getBoolean("myAllCatsObtained");
             currentPage = savedInstanceState.getInt("myCurrentPage");
             catBreedList = savedInstanceState.getParcelableArrayList("myCatBreeds");
             catBreedCountryList = savedInstanceState.getStringArrayList("myCatBreedCountries");
         } else {
-            existMoreCats = true;
+            allCatsObtained = false;
             currentPage = 0;
         }
 
@@ -100,73 +99,8 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
             }
         }
 
-        /*
-            Spinner adapter => Available countries
-         */
-        catBreedCountrySpinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                catBreedCountryList);
-
-        spinner.setAdapter(catBreedCountrySpinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCountry = catBreedCountryList.get(position);
-
-                presenter.onCatBreedCountryClicked(selectedCountry);
-
-                if (selectedCountry.equalsIgnoreCase(SPINNER_VALUE_ALL_COUNTRIES)) {
-                    // If All countries selected then remove any filter
-                    selectedCountry = "";
-                }
-
-                catBreedListAdapter.getFilter().filter(selectedCountry);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        /*
-            CatBreedList adapter => Available cat breeds
-         */
-
-        catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(CatBreedViewModel catBreed, int position) {
-                presenter.onCatBreedItemClicked(catBreed);
-            }
-        });
-
-        recyclerView.setAdapter(catBreedListAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
-
-                if (dy > 0) {
-                    if ((progressBar.getVisibility() != View.VISIBLE)
-                            && ((totalItemCount - visibleItemCount) <= pastVisibleItems)) {
-                        if (existMoreCats) {
-                            presenter.loadCatBreedsFromPage(++currentPage);
-                        }
-                        // else means No more cats to show
-                    }
-                }
-            }
-        });
-
+        setSpinner();
+        setRecyclerView();
     }
 
     @Override
@@ -207,8 +141,8 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState()");
 
-        outState.putBoolean("myExistMoreCats", existMoreCats);
-        Log.i(TAG, "Total Cat breed pages saved to Bundle! Value = " + existMoreCats);
+        outState.putBoolean("myAllCatsObtained", allCatsObtained);
+        Log.i(TAG, "AllCatsObtained? saved to Bundle! Value = " + allCatsObtained);
 
         outState.putInt("myCurrentPage", currentPage);
         Log.i(TAG, "Current page saved to Bundle! Value = " + currentPage);
@@ -233,33 +167,108 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         Log.i(TAG, "Cat breed country List saved to Bundle! size = " + catBreedCountryList.size());
     }
 
-    @Override
-    public void updateIfExistMoreCats(boolean moreCats) {
-        this.existMoreCats = moreCats;
+    private void setSpinner() {
+        catBreedCountrySpinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, catBreedCountryList);
+
+        spinner.setAdapter(catBreedCountrySpinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                presenter.onCatBreedCountryClicked(catBreedCountryList.get(position), SPINNER_VALUE_ALL_COUNTRIES);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void setRecyclerView() {
+        catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(CatBreedViewModel catBreed, int position) {
+                presenter.onCatBreedItemClicked(catBreed);
+            }
+        });
+
+        recyclerView.setAdapter(catBreedListAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                presenter.onRecyclerViewScrolled(layoutManager.getChildCount(), layoutManager.getItemCount(),
+                        layoutManager.findFirstVisibleItemPosition(), dy);
+
+            }
+        });
     }
 
     @Override
-    public void updateData(CatBreedViewModel viewModel) {
-        catBreedList.add(viewModel);
+    public int getCurrentPage() {
+        return this.currentPage;
+    }
+
+    @Override
+    public int getProgressVisibility() {
+        return this.progressBar.getVisibility();
+    }
+
+    @Override
+    public boolean getIfAllCatsObtained() {
+        return this.allCatsObtained;
+    }
+
+    @Override
+    public void setCurrentPage(int page) {
+        this.currentPage = page;
+    }
+
+    @Override
+    public void setIfAllCatsObtained(boolean allObtained) {
+        this.allCatsObtained = allObtained;
+    }
+
+    @Override
+    public void setListFilter(String constraint) {
+        this.catBreedListAdapter.getFilter().filter(constraint);
+    }
+
+    @Override
+    public void updateCatBreedsData(CatBreedViewModel catBreed) {
+        catBreedList.add(catBreed);
         catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
-        Log.d(TAG, "New item inserted: " + viewModel.getBreedName());
+        Log.d(TAG, "New item inserted: " + catBreed.getBreedName());
 
-        if (!isCountryInSpinner.containsKey(viewModel.getBreedCountryName())) {
-            isCountryInSpinner.put(viewModel.getBreedCountryName(), true);
+        updateSpinnerData(catBreed.getBreedCountryName());
+    }
 
-            catBreedCountryList.add(viewModel.getBreedCountryName());
+    private void updateSpinnerData(String country) {
+        if (!isCountryInSpinner.containsKey(country)) {
+            isCountryInSpinner.put(country, true);
+
+            // Get the selected country
+            String selectedCountry = (String) spinner.getSelectedItem();
+            Log.i(TAG, "On update spinner data. Selected country is " + selectedCountry);
+
+            catBreedCountryList.add(country);
             Collections.sort(catBreedCountryList);
             catBreedCountrySpinnerAdapter.notifyDataSetChanged();
-            Log.d(TAG, "New country inserted: " + viewModel.getBreedName());
-        }
-    }
 
-    @Override
-    public void updateSpinner(CountryViewModel country) {
-        //catBreedCountries.add(country);
-        //catBreedCountriesSpinner.add(country.getName());
-        //spinnerAdapter.notifyDataSetChanged();
-        Log.d(TAG, "New country inserted: " + country);
+            // Check if new country is before selected country
+            if (country.compareTo(selectedCountry) < 0) {
+                // Then fix the correct spinner position
+                spinner.setSelection(spinner.getSelectedItemPosition() + 1);
+            }
+
+            Log.d(TAG, "New country inserted: " + country);
+        }
     }
 
     @Override
