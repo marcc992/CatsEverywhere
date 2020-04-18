@@ -22,8 +22,8 @@ public class CatBreedsModel implements CatBreedsMVP.Model {
                     public CatBreedViewModel apply(CatBreedApi catBreedApi, String imageUrl) {
                         return new CatBreedViewModel(catBreedApi.getId(), catBreedApi.getName(),
                                 catBreedApi.getDescription(), catBreedApi.getCountryCode(),
-                                catBreedApi.getTemperament(), catBreedApi.getWikipediaUrl(),
-                                imageUrl);
+                                catBreedApi.getOrigin(), catBreedApi.getTemperament(),
+                                catBreedApi.getWikipediaUrl(), imageUrl);
                     }
                 });
     }

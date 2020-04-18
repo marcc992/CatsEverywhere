@@ -21,7 +21,7 @@ public interface CatBreedsMVP {
     interface Presenter {
         void loadCatBreedsFromPage(int pageNumber);
 
-        void onCatBreedCountryClicked(CountryViewModel country);
+        void onCatBreedCountryClicked(String country);
         void onCatBreedItemClicked(CatBreedViewModel catBreed);
 
         void rxJavaUnsubscribe();

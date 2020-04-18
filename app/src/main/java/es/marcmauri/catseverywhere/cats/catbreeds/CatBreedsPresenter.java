@@ -73,9 +73,9 @@ public class CatBreedsPresenter implements CatBreedsMVP.Presenter {
     }
 
     @Override
-    public void onCatBreedCountryClicked(CountryViewModel country) {
+    public void onCatBreedCountryClicked(String country) {
         if (view != null) {
-            view.showSnackBar("Country: " + country.getName());
+            view.showSnackBar("Country: " + country);
         }
         // TODO: Implementar carga de razas por pais
     }

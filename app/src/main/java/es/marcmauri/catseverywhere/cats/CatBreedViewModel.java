@@ -8,17 +8,20 @@ public class CatBreedViewModel implements Parcelable {
     private String breedName;
     private String breedDescription;
     private String breedCountryCode;
+    private String breedCountryName;
     private String breedTemperament;
     private String breedWikipediaUrl;
     private String breedImageUrl;
 
     public CatBreedViewModel(String breedId, String breedName, String breedDescription,
-                             String breedCountryCode, String breedTemperament,
-                             String breedWikipediaUrl, String breedImageUrl) {
+                             String breedCountryCode, String breedCountryName,
+                             String breedTemperament, String breedWikipediaUrl,
+                             String breedImageUrl) {
         this.breedId = breedId;
         this.breedName = breedName;
         this.breedDescription = breedDescription;
         this.breedCountryCode = breedCountryCode;
+        this.breedCountryName = breedCountryName;
         this.breedTemperament = breedTemperament;
         this.breedWikipediaUrl = breedWikipediaUrl;
         this.breedImageUrl = breedImageUrl;
@@ -29,6 +32,7 @@ public class CatBreedViewModel implements Parcelable {
         breedName = in.readString();
         breedDescription = in.readString();
         breedCountryCode = in.readString();
+        breedCountryName = in.readString();
         breedTemperament = in.readString();
         breedWikipediaUrl = in.readString();
         breedImageUrl = in.readString();
@@ -40,6 +44,7 @@ public class CatBreedViewModel implements Parcelable {
         dest.writeString(breedName);
         dest.writeString(breedDescription);
         dest.writeString(breedCountryCode);
+        dest.writeString(breedCountryName);
         dest.writeString(breedTemperament);
         dest.writeString(breedWikipediaUrl);
         dest.writeString(breedImageUrl);
@@ -92,6 +97,14 @@ public class CatBreedViewModel implements Parcelable {
 
     public void setBreedCountryCode(String breedCountryCode) {
         this.breedCountryCode = breedCountryCode;
+    }
+
+    public String getBreedCountryName() {
+        return breedCountryName;
+    }
+
+    public void setBreedCountryName(String breedCountryName) {
+        this.breedCountryName = breedCountryName;
     }
 
     public String getBreedTemperament() {

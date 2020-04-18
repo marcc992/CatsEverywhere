@@ -15,6 +15,7 @@ public class MemoryCatBreedDetailsRepository implements CatBreedDetailsRepositor
                     "Undefined",
                     "Undefined",
                     "Undefined",
+                    "Undefined",
                     "",
                     "");
         }

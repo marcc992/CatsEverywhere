@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -19,6 +21,9 @@ import com.example.catseverywhere.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -54,16 +59,17 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
     private CatBreedListAdapter catBreedListAdapter;
     private ArrayList<CatBreedViewModel> catBreedList = new ArrayList<>();
-    // TODO: Make CustomSpinnerAdapter<>
-    //private ArrayAdapter<String> spinnerAdapter;
-    //private ArrayList<CountryViewModel> catBreedCountries = new ArrayList<>();
-    //private ArrayList<String> catBreedCountriesSpinner = new ArrayList<>();
+
+    // todo: Remove CountryViewModel => We just need the country name
+    private ArrayAdapter<String> catBreedCountrySpinnerAdapter;
+    private ArrayList<String> catBreedCountryList;
+    private Map<String, Boolean> isCountryInSpinner = new HashMap<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cat_breedss);
+        setContentView(R.layout.activity_cat_breeds);
 
         Log.i(TAG, "onCreate()");
 
@@ -75,27 +81,47 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
             existMoreCats = savedInstanceState.getBoolean("myExistMoreCats");
             currentPage = savedInstanceState.getInt("myCurrentPage");
             catBreedList = savedInstanceState.getParcelableArrayList("myCatBreeds");
+            catBreedCountryList = savedInstanceState.getStringArrayList("myCatBreedCountries");
         } else {
             existMoreCats = true;
             currentPage = 0;
         }
-/*
-        spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                catBreedCountriesSpinner);
 
-        spinner.setAdapter(spinnerAdapter);
+        if (catBreedCountryList == null || catBreedCountryList.isEmpty()) {
+            catBreedCountryList = new ArrayList<>();
+            catBreedCountryList.add("All");
+        } else {
+            // If countries were found then validator map will update
+            for (String country : catBreedCountryList) {
+                if (!isCountryInSpinner.containsKey(country)) {
+                    isCountryInSpinner.put(country, true);
+                }
+            }
+        }
+
+        /*
+            Spinner adapter => Available countries
+         */
+        catBreedCountrySpinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                catBreedCountryList);
+
+        spinner.setAdapter(catBreedCountrySpinnerAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                presenter.onCatBreedCountryClicked(catBreedCountries.get(position));
+                presenter.onCatBreedCountryClicked(catBreedCountryList.get(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-*/
+
+        /*
+            CatBreedList adapter => Available cat breeds
+         */
+
         catBreedListAdapter = new CatBreedListAdapter(catBreedList, new CatBreedListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(CatBreedViewModel catBreed, int position) {
@@ -192,6 +218,9 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
         outState.putParcelableArrayList("myCatBreeds", catBreedList);
         Log.i(TAG, "Cat breed List saved to Bundle! size = " + catBreedList.size());
+
+        outState.putStringArrayList("myCatBreedCountries", catBreedCountryList);
+        Log.i(TAG, "Cat breed country List saved to Bundle! size = " + catBreedCountryList.size());
     }
 
     @Override
@@ -204,6 +233,15 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         catBreedList.add(viewModel);
         catBreedListAdapter.notifyItemInserted(catBreedList.size() - 1);
         Log.d(TAG, "New item inserted: " + viewModel.getBreedName());
+
+        if (!isCountryInSpinner.containsKey(viewModel.getBreedCountryName())) {
+            isCountryInSpinner.put(viewModel.getBreedCountryName(), true);
+
+            catBreedCountryList.add(viewModel.getBreedCountryName());
+            Collections.sort(catBreedCountryList);
+            catBreedCountrySpinnerAdapter.notifyDataSetChanged();
+            Log.d(TAG, "New country inserted: " + viewModel.getBreedName());
+        }
     }
 
     @Override

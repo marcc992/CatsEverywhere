@@ -17,5 +17,5 @@
     <string name="cat_breed_temperament_example">Affectionate, Social, Intelligent, Playful, Active</string>
     <string name="wikipedia">Wikipedia</string>
     <string name="cat_breed_wikipedia_example">https://en.wikipedia.org/wiki/Aegean_cat</string>
-    <string name="choose_country">Choose a country</string>
+    <string name="choose_country">Country:</string>
 </resources>

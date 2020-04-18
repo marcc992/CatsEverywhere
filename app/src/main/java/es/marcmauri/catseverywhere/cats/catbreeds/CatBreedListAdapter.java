@@ -24,6 +24,8 @@ public class CatBreedListAdapter extends RecyclerView.Adapter<CatBreedListAdapte
 
     private final String TAG = CatBreedListAdapter.class.getName();
 
+    // TODO: Add filtering using this post: https://www.androidhive.info/2017/11/android-recyclerview-with-search-filter-functionality/
+
     private View itemView;
     private List<CatBreedViewModel> list;
     private OnItemClickListener listener;
