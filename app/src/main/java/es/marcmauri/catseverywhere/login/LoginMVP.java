@@ -21,7 +21,7 @@ public interface LoginMVP {
 
         void showCustomSnackBar(String text);
 
-        void navigateToCatsScreen();
+        void navigateToCatBreedsScreen();
     }
 
     interface Presenter {
