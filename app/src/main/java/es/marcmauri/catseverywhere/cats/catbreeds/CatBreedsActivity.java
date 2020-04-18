@@ -38,6 +38,7 @@ import es.marcmauri.catseverywhere.root.App;
 public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP.View {
 
     private final String TAG = CatBreedsActivity.class.getName();
+    private final String SPINNER_VALUE_ALL_COUNTRIES = "All";
 
     @BindView(R.id.activity_cat_breeds_root_view)
     ViewGroup rootView;
@@ -89,7 +90,7 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
 
         if (catBreedCountryList == null || catBreedCountryList.isEmpty()) {
             catBreedCountryList = new ArrayList<>();
-            catBreedCountryList.add("All");
+            catBreedCountryList.add(SPINNER_VALUE_ALL_COUNTRIES);
         } else {
             // If countries were found then validator map will update
             for (String country : catBreedCountryList) {
@@ -110,7 +111,16 @@ public class CatBreedsActivity extends AppCompatActivity implements CatBreedsMVP
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                presenter.onCatBreedCountryClicked(catBreedCountryList.get(position));
+                String selectedCountry = catBreedCountryList.get(position);
+
+                presenter.onCatBreedCountryClicked(selectedCountry);
+
+                if (selectedCountry.equalsIgnoreCase(SPINNER_VALUE_ALL_COUNTRIES)) {
+                    // If All countries selected then remove any filter
+                    selectedCountry = "";
+                }
+
+                catBreedListAdapter.getFilter().filter(selectedCountry);
             }
 
             @Override
